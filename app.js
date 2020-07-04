@@ -55,7 +55,7 @@ function promptUser() {
         .catch((err) => {
             throw err;
         });
-};   
+};  
 
 
 function newManager() {
