@@ -10,37 +10,168 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-
+const employees = [];
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
-
 function promptUser() {
-    return inquirer.prompt ([
+    inquirer
+        .prompt([
+        {
+            type: "list",
+            message: "Would you like to add a member to your company?",
+            name: "mainChoice",
+            choices: ["Yes", "No"],
+        },
+        ])
+        .then((answer) => {
+            if (answer.mainChoice === "Yes") {
+                inquirer.prompt ([
+                    {
+                        type: "list",
+                        name: "choices",
+                        message: "What is your role in the company?",
+                        choices: ["Manager", "Intern", "Engineer"],  
+                    }    
+                    ])
+                    .then(function(choices) {
+                        switch (choices.choices){
+                            case "Manager":
+                                newManager();
+                            break;
+                            case "Intern":
+                                newIntern()
+                                break;
+                            case "Engineer":
+                                newEngineer();
+                                break;
+                        }
+                    });
+            } else {
+            console.log(JSON.stringify(employees, null, 2));
+            fs.writeFileSync(outputPath, render(employees), "utf-8");
+            }
+        })
+        .catch((err) => {
+            throw err;
+        });
+};   
+
+
+function newManager() {
+    inquirer.prompt ([
         {
             type: "input",
             name: "name",
             message: "What is your name?",
         },
         {
-            type: "number",
+            type: "input",
             name: "id",
             message: "What is your ID number?",
         },
         {
-            type: "email",
+            type: "input",
             name: "email",
             message: "What is your email address?",
         },
-    });
-
-promptUser().then(function(answers){
-    fs.writeFileSync("./team.html" + "\n", utf-8, function (err) {
-        if (err) {
-            throw (err);
+        {
+        type: "input", 
+        name: "officeNumber",
+        message: "What is your Office Number?",
         }
-}
+    ])
+    .then((answers) => {
+        const employee = new Manager(
+            answers.name,
+            answers.id,
+            answers.email,
+            answers.officeNumber
+        );
 
+        employees.push(employee);
+
+        promptUser()
+
+    })
+};
+
+function newIntern() {
+    inquirer.prompt ([
+        {
+            type: "input",
+            name: "name",
+            message: "What is your name?",
+        },
+        {
+            type: "input",
+            name: "id",
+            message: "What is your ID number?",
+        },
+        {
+            type: "input",
+            name: "email",
+            message: "What is your email address?",
+        },
+        {
+        type: "input", 
+        name: "school",
+        message: "Which school are you interning with?",
+        }
+    ])
+    .then((answers) => {
+        const employee = new Intern(
+            answers.name,
+            answers.id,
+            answers.email,
+            answers.school
+        );
+
+        employees.push(employee);
+
+        promptUser()
+    })
+};
+
+function newEngineer() {
+    inquirer.prompt ([
+        {
+            type: "input",
+            name: "name",
+            message: "What is your name?",
+        },
+        {
+            type: "input",
+            name: "id",
+            message: "What is your ID number?",
+        },
+        {
+            type: "input",
+            name: "email",
+            message: "What is your email address?",
+        },
+        {
+        type: "input", 
+        name: "github",
+        message: "What is your Github ID?",
+        }
+    ])
+    
+    .then((answers) => {
+        const employee = new Engineer(
+            answers.name,
+            answers.id,
+            answers.email,
+            answers.github
+        );
+
+        employees.push(employee);
+
+        promptUser()
+    })
+};
+
+promptUser();
 
 
 // After the user has input all employees desired, call the `render` function (required
@@ -61,4 +192,4 @@ promptUser().then(function(answers){
 // and Intern classes should all extend from a class named Employee; see the directions
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
+// for the provided render function to work!
